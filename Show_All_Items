@@ -1,0 +1,37 @@
+' This VBA code is designed to set each selected folder and its subfolders to display the total item count, rather than just unread items.
+
+Sub ShowTotalItems()
+    Dim objFolder As Outlook.Folder
+    Dim objExplorer As Outlook.Explorer
+    
+    ' Get the selected folder
+    On Error Resume Next
+    Set objExplorer = Application.ActiveExplorer
+    Set objFolder = objExplorer.CurrentFolder
+    
+    ' Check if a folder is selected
+    If objFolder Is Nothing Then
+        MsgBox "Please select a folder."
+        Exit Sub
+    End If
+    
+    ' Call the recursive function to show total items
+    ShowTotalItemsRecursive objFolder
+    
+    ' Refresh the explorer window
+    objExplorer.Refresh
+End Sub
+
+Sub ShowTotalItemsRecursive(ByVal folder As Outlook.Folder)
+    Dim subfolder As Outlook.Folder
+    
+    ' Display total items for the current folder
+    folder.ShowItemCount = olShowTotalItemCount
+    
+    ' Process subfolders recursively
+    If folder.Folders.Count > 0 Then
+        For Each subfolder In folder.Folders
+            ShowTotalItemsRecursive subfolder
+        Next subfolder
+    End If
+End Sub
